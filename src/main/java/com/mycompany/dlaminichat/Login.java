@@ -15,6 +15,7 @@ public class Login {
     private String password;
     private String cellPhoneNumber;
     
+    
     private boolean registered;
     private boolean lastLoginSuccessful;
     
@@ -37,13 +38,96 @@ public class Login {
     //======== Individual Checks ========
     
     public boolean checkUserName(){
-        return username !=null && username contains("_") && username.length() <=5;
+        return username != null && username.contains("_") && username.length() <=5;
         
     }
     
     public boolean checkPasswordComplexity() {
-        if (password = null || password.length() < 8){
+        if (password == null || password.length() < 8){
             return false;
         }
+        
+        boolean hasCapital = false;
+        boolean hasDigit = false;
+        boolean hasSpecial = false;
+        
+        for (int i = 0; i < password.length(); i++){
+            char currentChar = password.charAt(i);
+            
+            if (Character.isUpperCase(currentChar)) {
+                hasCapital = true;
+            }else if (Character.isDigit(currentChar)) {
+                hasDigit = true;
+            }else if (SPECIAL_CHARACTERS.indexOf(currentChar) >=0) {
+                hasSpecial = true;
+            }
+        }return hasCapital && hasDigit && hasSpecial;
     }
+        
+        public boolean checkCellPhoneNumber() {
+            return cellPhoneNumber != null && Pattern.matches(CELL_NUMBER_REGEX, cellPhoneNumber);
+        }
+        
+        //============== Registration ============
+        
+        public String registerUser() {
+            if (!checkUserName()) {
+                return "Username is not correctly formatted, please make sure username has no more than 5 "
+                + "characters and has an underscore";
+            }
+            
+            if (!checkPasswordComplexity()){
+                return "Password is not correctly formatted, please enure your "
+                        + "password contains at least 8 characters, 1 capital letter "
+                        + "1 special character, and a number";
+            }
+            
+            registered = true;
+            return "Welcome " + firstName + ", " + lastName + " it is great to see you.";
+        }
+        
+        public String cellPhoneMessage() {
+            if (checkCellPhoneNumber()) {
+                return "Cell number is successfully captured.";
+            }
+            return "Cell phone number is incorrectly formatted and/or does not contain"
+                    + " an international code, please fix your error and try again.";
+        }
+        
+        //====== Login ======
+        
+        public boolean loginUser(String enteredUsername, String enteredPassword) {
+            lastLoginSuccessful = registered
+                    && username.equals(enteredUsername)
+                    && password.equals(enteredPassword);
+            return lastLoginSuccessful;
+        }
+        
+        public String returnLoginStatus(){
+            if (lastLoginSuccessful) {
+                return "Welcome " + firstName + ", " + lastName + ", it is great to see you again.";
+            }
+            return "Username or password incorrect, please try again.";
+        }
+        
+        public String getFirstName() {
+            return firstName;
+        }
+        
+        public String getLastName() {
+            return lastName;
+        }
+        
+        public String getUserName() {
+            return username;
+        }
+        
+        public String getCellPhoneNumber() {
+            return cellPhoneNumber;
+        }
+        
+        public boolean isRegistered() {
+            return registered;
+        }
+        
 }
