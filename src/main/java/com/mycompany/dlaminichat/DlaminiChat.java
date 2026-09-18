@@ -42,6 +42,7 @@ public class DlaminiChat {
             
             if (!isRegistered) {
                 System.out.println("Please try registering again.\n");
+                
             }
         }
         System.out.println("\n==== Login ====");
