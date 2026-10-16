@@ -200,5 +200,19 @@ public class DlaminiChat {
         System.out.println("Message deleted.");
     }
     
-    
+    private static int readNumber(Scanner input) {
+        String entry = input.nextLine();
+        boolean allDigits = entry.length() > 0 && entry.length() < 9;
+        
+        for (int x = 0; x < entry.length(); ++x) {
+            if (!Character.isDigit(entry.charAt(x))) {
+                allDigits = false;
+            }
+        }
+        
+        if (allDigits) {
+            return Integer.parseInt(entry);
+        }
+        return -1;
+    }
 }
