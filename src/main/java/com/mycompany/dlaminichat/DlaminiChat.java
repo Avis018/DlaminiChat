@@ -9,6 +9,17 @@ import java.util.Scanner;
  * @author Student
  */
 public class DlaminiChat {
+    
+    //Part 2: Quick Chat menu options 
+    private static final int MENU_SEND = 1;
+    private static final int MENU_RECENT = 2;
+    private static final int MENU_QUIT = 3;
+    
+    private static final String SCREEN_TOO_LONG = "Please enter a message of less than 250 characters";
+    private static final String SCREEN_MESSAGE_OK = "Message sent";
+    private static final String SCREEN_SENT = "Message successfully sent";
+    private static final String SCREEN_DISREGARD = "Press 0 to delete the message";
+    private static final String SCREEN_STORED = "Message succesfuly stored";
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -60,5 +71,18 @@ public class DlaminiChat {
         }
         
         input.close();
+    }
+    //=============== Part 2: QuickChat (DlaminiChat) ================
+    
+    private static void runQuickChat(Scanner input) {
+        System.out.println("\n Welcome to QuickChat.");
+        int numMessages = askNumberOfMessages(input);
+        boolean messagesEntered = false;
+        int choice = 0;
+        
+        while (choice !=MENU_QUIT) {
+            printMENU();
+            choice = readNumber(input);
+        }
     }
 }
