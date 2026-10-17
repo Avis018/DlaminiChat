@@ -1,4 +1,4 @@
-
+package com.mycompany.dlaminichat;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -23,16 +23,16 @@ public class Message {
     
     
     //for unit tests
-    public static final String MESSAGE_READY = "Message ready to send";
-    public static final String CELL_SUCCESS = "Cell phone number successfully captured";
+    public static final String MESSAGE_READY = "Message ready to send.";
+    public static final String CELL_SUCCESS = "Cell phone number successfully captured.";
     public static final String CELL_FAILURE = "Cell phone number is incorrectly formatted "
             + "or does not contain an international code. "
             + "Please correct the number and try again.";
-    public static final String MESSAGE_SENT = "Message succesfully sent.";
+    public static final String MESSAGE_SENT = "Message successfully sent.";
     public static final String MESSAGE_DISREGARDED = "Press 0 to delete the message.";
     public static final String MESSAGE_STORED = "Message successfully stored.";
-    public static final String MESSAGE_NOT_STORED = "Message could not be stored";
-    public static final String INVALID_CHOICE = "Invalid option, please select 1, 2, or 3";
+    public static final String MESSAGE_NOT_STORED = "Message could not be stored.";
+    public static final String INVALID_CHOICE = "Invalid option, please choose 1, 2 or 3.";
     
     private static StringBuilder sentMessageDetails = new StringBuilder();
     private static int totalMessagesSent = 0;
@@ -58,7 +58,7 @@ public class Message {
         this.messageNumber = messageNumber;
         this.recipient = recipient;
         this.messageText = messageText;
-        this.messageHash = messageHash;
+        this.messageHash = buildHash(messageID, messageNumber, messageText);
     }
     
     //======= Checks =======
@@ -177,7 +177,7 @@ public class Message {
             if (storeMessage()) {
                 result = MESSAGE_STORED;
             }else {
-                result MESSAGE_NOT_STORED;
+                result = MESSAGE_NOT_STORED;
             }
         } else {
             result = INVALID_CHOICE;
@@ -188,8 +188,8 @@ public class Message {
     // ====== Display =======
     
     public String getDetails() {
-        return "MessageID: " + messageID + "\n"
-                + "MessageHash: " + messageHash + "\n"
+        return "Message ID: " + messageID + "\n"
+                + "Message Hash: " + messageHash + "\n"
                 + "Recipient: " + recipient + "\n"
                 + "Message: " + messageText + "\n";
     }

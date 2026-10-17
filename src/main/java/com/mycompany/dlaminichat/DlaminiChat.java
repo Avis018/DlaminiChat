@@ -15,11 +15,11 @@ public class DlaminiChat {
     private static final int MENU_RECENT = 2;
     private static final int MENU_QUIT = 3;
     
-    private static final String SCREEN_TOO_LONG = "Please enter a message of less than 250 characters";
+    private static final String SCREEN_TOO_LONG = "Please enter a message of less than 250 characters.";
     private static final String SCREEN_MESSAGE_OK = "Message sent";
     private static final String SCREEN_SENT = "Message successfully sent";
     private static final String SCREEN_DISREGARD = "Press 0 to delete the message";
-    private static final String SCREEN_STORED = "Message succesfuly stored";
+    private static final String SCREEN_STORED = "Message successfully stored";
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -69,30 +69,31 @@ public class DlaminiChat {
             loggedIn = user.loginUser(loginUsername, loginPassword);
             System.out.println(user.returnLoginStatus());
         }
+        runQuickChat(input);
         
         input.close();
     }
     //=============== Part 2: QuickChat (DlaminiChat) ================
     
     private static void runQuickChat(Scanner input) {
-        System.out.println("\n Welcome to QuickChat.");
+        System.out.println("\nWelcome to QuickChat.");
         int numMessages = askNumberOfMessages(input);
         boolean messagesEntered = false;
         int choice = 0;
         
         while (choice !=MENU_QUIT) {
-            printMENU();
+             printMenu();
             choice = readNumber(input);
             
             if (choice == MENU_SEND) {
-                if (messageEntered) {
+                if (messagesEntered) {
                     System.out.println("You have already entered all " + numMessages + " messages.");
                 }else{
                     sendMessages(input, numMessages);
-                    messageEntered = true;
+                    messagesEntered = true;
                 }
             }else if (choice == MENU_RECENT) {
-                System.out.println("Coming soon");
+                System.out.println("Coming Soon.");
             }else if (choice != MENU_QUIT) {
                 System.out.println("Invalid option, please enter 1, 2 or 3.");
             }
@@ -103,17 +104,17 @@ public class DlaminiChat {
     private static void printMenu() {
         System.out.println("\n Please choose an option: ");
         System.out.println("1) Send Messages");
-        System.out.println("2) Show recenlty sent Messages");
+        System.out.println("2) Show recently sent messages");
         System.out.println("3) Quit");
     }
     
     //user should decide how many messages they want to enter
     private static int askNumberOfMessages(Scanner input) {
-        System.out.println("How many messages do want to enter?");
+        System.out.println("How many messages do you wish to enter?");
         int numMessages = readNumber(input);
         
         while (numMessages < 1) {
-            System.out.println("Please enter a whole and must be greater than 0.");
+            System.out.println("Please enter a whole number greater than 0.");
             System.out.println("How many messages do you wish to enter?");
             numMessages = readNumber(input);
         }
@@ -127,7 +128,7 @@ public class DlaminiChat {
             System.out.println("\n--- Message " + (x + 1) + " of " + numMessages + " ---");
             
             String recipient = askRecipient(input);
-            String text = askMessageTest(input);
+            String text = askMessageText(input);
             Message message = new Message(x, recipient, text);
             
             System.out.println(message.messageIDMessage());
@@ -141,7 +142,7 @@ public class DlaminiChat {
         String recipient = input.nextLine();
         
         while (!Message.isValidRecipient(recipient)) {
-            System.out.println(Message.CELL.FAILURE);
+            System.out.println(Message.CELL_FAILURE);
             System.out.println("Enter the recipient's cell number (e.g. +27718693002): ");
             recipient = input.nextLine();
         }
@@ -151,12 +152,12 @@ public class DlaminiChat {
     
     private static String askMessageText(Scanner input) {
         System.out.println("Enter your message (maximum 250 characters): ");
-        text = input.nextLine();
+        String text = input.nextLine();
         
         while (!Message.isMessageLengthValid(text)) {
             System.out.println(SCREEN_TOO_LONG);
             System.out.println("Enter your message (maximum 250 characters): ");
-            text = input.hasNextLine();
+            text = input.nextLine();
         }
         System.out.println(SCREEN_MESSAGE_OK);
         return text;
