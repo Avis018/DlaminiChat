@@ -254,6 +254,10 @@ public class Message {
         jsonFileName = fileName;
     }
     
+    public static String getJsonFileName() {
+        return jsonFileName;
+    }
+    
     public static void clearMessages() {
         sentMessageDetails = new StringBuilder();
         totalMessagesSent = 0;

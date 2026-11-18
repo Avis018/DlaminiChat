@@ -14,6 +14,19 @@ public class DlaminiChat {
     private static final int MENU_SEND = 1;
     private static final int MENU_RECENT = 2;
     private static final int MENU_QUIT = 3;
+    private static final int MENU_STORED = 4;
+    
+    //Part 3: Stored Messages menu options
+    private static final int STORED_SENDERS = 1;
+    private static final int STORED_LONGEST = 2;
+    private static final int STORED_SEARCH_ID = 3;
+    private static final int STORED_SEARCH_RECIPIENT = 4;
+    private static final int STORED_DELETE = 5;
+    private static final int STORED_REPORT = 6;
+    private static final int STORED_BACK = 7;
+    
+    //Part 3: holds the sent, disregarded and stored messages in arrays
+    private static final MessageManager manager = new MessageManager();
     
     private static final String SCREEN_TOO_LONG = "Please enter a message of less than 250 characters.";
     private static final String SCREEN_MESSAGE_OK = "Message sent";
@@ -69,16 +82,17 @@ public class DlaminiChat {
             loggedIn = user.loginUser(loginUsername, loginPassword);
             System.out.println(user.returnLoginStatus());
         }
-        runQuickChat(input);
+        runQuickChat(input, user);
         
         input.close();
     }
     //=============== Part 2: QuickChat (DlaminiChat) ================
     
-    private static void runQuickChat(Scanner input) {
+    private static void runQuickChat(Scanner input, Login user) {
         System.out.println("\nWelcome to QuickChat.");
         int numMessages = askNumberOfMessages(input);
         boolean messagesEntered = false;
+        boolean storedMessagesLoaded = false;
         int choice = 0;
         
         while (choice !=MENU_QUIT) {
@@ -94,8 +108,14 @@ public class DlaminiChat {
                 }
             }else if (choice == MENU_RECENT) {
                 System.out.println("Coming Soon.");
+            }else if (choice == MENU_STORED) {
+                if (!storedMessagesLoaded) {
+                    loadStoredMessages();
+                    storedMessagesLoaded = true;
+                }
+                storedMessagesMenu(input, user.getFirstName() + " " + user.getLastName());
             }else if (choice != MENU_QUIT) {
-                System.out.println("Invalid option, please enter 1, 2 or 3.");
+                System.out.println("Invalid option, please enter 1, 2, 3 or 4.");
             }
         }
         System.out.println("Goodbye.");
@@ -106,6 +126,7 @@ public class DlaminiChat {
         System.out.println("1) Send Messages");
         System.out.println("2) Show recently sent messages");
         System.out.println("3) Quit");
+        System.out.println("4) Stored Messages");
     }
     
     //user should decide how many messages they want to enter
@@ -176,6 +197,9 @@ public class DlaminiChat {
         }
         
         String result = message.sentMessage(choice);
+        if (!result.equals(Message.MESSAGE_NOT_STORED)) {
+            manager.addMessage(message, choice);
+        }
         
         if (choice == Message.SEND) {
             System.out.println(SCREEN_SENT);
@@ -200,6 +224,71 @@ public class DlaminiChat {
         }
         System.out.println("Message deleted.");
     }
+    
+    //=============== Part 3: Stored Messages ================
+    
+    //Reads the JSON file into the stored messages array and shows what was read
+    private static void loadStoredMessages() {
+        int loaded = manager.loadStoredMessages(Message.getJsonFileName());
+        
+        if (loaded < 0) {
+            System.out.println("No stored messages file found yet.");
+        }else {
+            System.out.println("\nStored messages read from " + Message.getJsonFileName() + ": ");
+            System.out.println(manager.listStoredMessages());
+        }
+    }
+    
+    private static void storedMessagesMenu(Scanner input, String sender) {
+        int choice = 0;
+        
+        while (choice != STORED_BACK) {
+            printStoredMenu();
+            choice = readNumber(input);
+            
+            if (choice == STORED_SENDERS) {
+                System.out.println(manager.displaySendersAndRecipients(sender));
+            }else if (choice == STORED_LONGEST) {
+                System.out.println("Longest stored message: " + manager.longestStoredMessage());
+            }else if (choice == STORED_SEARCH_ID) {
+                System.out.println("Enter the message ID: ");
+                System.out.println(manager.displayByMessageID(input.nextLine()));
+            }else if (choice == STORED_SEARCH_RECIPIENT) {
+                searchRecipient(input);
+            }else if (choice == STORED_DELETE) {
+                System.out.println("Enter the message hash: ");
+                System.out.println(manager.deleteByHash(input.nextLine()));
+            }else if (choice == STORED_REPORT) {
+                System.out.println(manager.buildReport(Message.STORE));
+            }else if (choice != STORED_BACK) {
+                System.out.println("Invalid option, please enter a number from 1 to 7.");
+            }
+        }
+    }
+    
+    private static void printStoredMenu() {
+        System.out.println("\n Stored Messages - please choose an option: ");
+        System.out.println("1) Display the sender and recipient of all stored messages");
+        System.out.println("2) Display the longest stored message");
+        System.out.println("3) Search for a message ID");
+        System.out.println("4) Search for all messages stored for a recipient");
+        System.out.println("5) Delete a message using its message hash");
+        System.out.println("6) Display a report of all stored messages");
+        System.out.println("7) Back to the main menu");
+    }
+    
+    private static void searchRecipient(Scanner input) {
+        System.out.println("Enter the recipient's cell number: ");
+        String[] found = manager.searchByRecipient(input.nextLine());
+        
+        if (found.length == 0) {
+            System.out.println("No messages found for that recipient.");
+        }
+        for (int x = 0; x < found.length; ++x) {
+            System.out.println(found[x]);
+        }
+    }
+    
     
     private static int readNumber(Scanner input) {
         String entry = input.nextLine();
